@@ -18,6 +18,8 @@ def main():
         account_no=os.getenv("DNSE_ACCOUNT_NO"),
         market_type="STOCK",
         order_category="NORMAL",
+        page_index=0,
+        page_size=20,
         dry_run=False,
     )
     print(status, body)

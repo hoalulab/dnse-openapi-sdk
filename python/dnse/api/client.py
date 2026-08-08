@@ -60,18 +60,52 @@ class DNSEClient:
             dry_run=dry_run,
         )
 
-    def get_position_by_id(self, market_type, position_id, dry_run=False):
+    def get_position_by_id(self, market_type, position_id, version=None, dry_run=False):
         return self._request(
             "GET",
-            f"/accounts/positions/{position_id}",
+            f"/positions/{position_id}",
             query={"marketType": market_type},
+            version=version,
             dry_run=dry_run,
         )
 
-    def get_orders(self, account_no, market_type, order_category=None, dry_run=False):
+    def get_position_pnl_configs(self, market_type, position_id, version=None, dry_run=False):
+        return self._request(
+            "GET",
+            f"/positions/{position_id}/pnl-configs",
+            query={"marketType": market_type},
+            version=version,
+            dry_run=dry_run,
+        )
+
+    def post_position_pnl_configs(self, market_type, position_id, payload, trading_token, version=None, dry_run=False):
+        headers = {"trading-token": trading_token}
+        return self._request(
+            "POST",
+            f"/positions/{position_id}/pnl-configs",
+            query={"marketType": market_type},
+            body=payload,
+            headers=headers,
+            version=version,
+            dry_run=dry_run,
+        )
+
+    def get_orders(
+            self,
+            account_no,
+            market_type,
+            order_category=None,
+            page_index=None,
+            page_size=None,
+            dry_run=False,
+    ):
         query = {"marketType": market_type}
         if order_category:
             query["orderCategory"] = order_category
+        if page_index is not None:
+            query["pageIndex"] = page_index
+        if page_size is not None:
+            query["pageSize"] = page_size
         return self._request(
             "GET",
             f"/accounts/{account_no}/orders",
@@ -210,6 +244,27 @@ class DNSEClient:
             dry_run=dry_run,
         )
 
+    def get_expected_price(self, symbol, board_id=None, from_date=None, to_date=None, limit=None, order = None, next_page_token=None, dry_run=False):
+        query = {}
+        if board_id is not None:
+            query["boardId"] = board_id
+        if from_date is not None:
+            query["from"] = from_date
+        if to_date is not None:
+            query["to"] = to_date
+        if limit is not None:
+            query["limit"] = limit
+        if order is not None:
+            query["order"] = order
+        if next_page_token is not None:
+            query["nextPageToken"] = next_page_token
+        return self._request(
+            "GET",
+            f"/price/{symbol}/expected-price",
+            query=query if query else None,
+            dry_run=dry_run,
+        )
+
     def get_quotes(self, symbol, board_id=None, from_date=None, to_date=None, limit=None, order = None, next_page_token=None, dry_run=False):
         query = {}
         if board_id is not None:
@@ -252,7 +307,7 @@ class DNSEClient:
             dry_run=dry_run,
         )
 
-    def get_instruments(self, symbol=None, market_id=None, security_group_id=None, index_name=None, limit=None, page=None, dry_run=False):
+    def get_instruments(self, symbol=None, market_id=None, security_group_id=None, index_name=None, limit=None, page=None, version=None, dry_run=False):
         query = {}
         if symbol is not None:
             query["symbol"] = symbol
@@ -268,8 +323,9 @@ class DNSEClient:
             query["page"] = page
         return self._request(
             "GET",
-            f"/instruments",
+            "/market/instruments",
             query=query if query else None,
+            version=version,
             dry_run=dry_run,
         )
 
@@ -333,17 +389,18 @@ class DNSEClient:
             dry_run=dry_run,
         )
 
-    def post_order(self, market_type, payload, trading_token, order_category="NORMAL", dry_run=False):
+    def post_order(self, account_no, market_type, payload, trading_token, order_category="NORMAL", version=None, dry_run=False):
         headers = {"trading-token": trading_token}
         query = {"marketType": market_type}
         if order_category:
             query["orderCategory"] = order_category
         return self._request(
             "POST",
-            "/accounts/orders",
+            f"/accounts/{account_no}/orders",
             query=query,
             body=payload,
             headers=headers,
+            version=version,
             dry_run=dry_run,
         )
 
@@ -406,50 +463,30 @@ class DNSEClient:
             dry_run=dry_run,
         )
 
-    def close_position(self, position_id, market_type, trading_token, dry_run=False):
+    def close_position(self, position_id, market_type, trading_token, version=None, dry_run=False):
         headers = {"trading-token": trading_token}
         query = {"marketType": market_type}
         return self._request(
             "POST",
-            f"/accounts/positions/{position_id}/close",
+            f"/positions/{position_id}/close",
             query=query,
             headers=headers,
+            version=version,
             dry_run=dry_run,
         )
 
-    def get_pnl_configs_position(self, position_id, market_type, dry_run=False):
-        query = {"marketType": market_type}
-        return self._request(
-            "GET",
-            f"/accounts/positions/{position_id}/pnl-configs",
-            query=query,
-            dry_run=dry_run,
-        )
-
-    def post_pnl_configs_position(self, position_id, market_type, trading_token, payload, dry_run=False):
-        headers = {"trading-token": trading_token}
-        query = {"marketType": market_type}
-        return self._request(
-            "POST",
-            f"/accounts/positions/{position_id}/pnl-configs",
-            query=query,
-            body=payload,
-            headers=headers,
-            dry_run=dry_run,
-        )
-
-    def _request(self, method, path, query=None, body=None, headers=None, dry_run=False):
+    def _request(self, method, path, query=None, body=None, headers=None, version=None, dry_run=False):
         debug = os.getenv("DEBUG", "").lower() == "true"
         url = self._build_url(path, query)
         date_value, signature_header_value = self._signature_headers(method, path)
         date_header_name = get_date_header_name()
 
-        # Build headers dict
+        # Build headers dict (per-request `version` overrides the client default)
         req_headers = {
             date_header_name: date_value,
             "X-Signature": signature_header_value,
             "x-api-key": self._api_key,
-            "version": self._api_version,
+            "version": version or self._api_version,
         }
 
         if body is not None:

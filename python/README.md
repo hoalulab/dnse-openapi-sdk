@@ -115,14 +115,14 @@ python trading-api/get_accounts.py
 | `get_execution_detail.py` | Demonstrates how to retrieve detailed execution information of an order.                                              |
 | `get_positions.py`        | Demonstrates how to retrieve current holding positions.                                                               |
 | `get_positions_by_id.py`  | Demonstrates how to retrieve detailed information of a specific position (by ID).                                     |
+| `get_position_pnl_configs.py` | Demonstrates how to retrieve PnL configs of a derivative position (by ID).                                      |
+| `post_position_pnl_configs.py` | Demonstrates how to create or update PnL configs of a derivative position (by ID).                           |
 | `close_position.py`       | Demonstrates how to close an existing position (by ID).                                                               |
 | `send_email_otp.py`       | Demonstrates how to request an OTP sent to your registered email. The OTP is required for generating a trading token. |
 | `create_trading_token.py` | Demonstrates how to generate a Trading Token required for order placement.                                            |
 | `post_order.py`           | Demonstrates how to submit a new trading order.                                                                       |
 | `cancel_order.py`         | Demonstrates how to cancel an existing order.                                                                         |
 | `replace_order.py`        | Demonstrates how to modify an existing order.                                                                         |
-| `get_pnl_configs_position.py`        | Demonstrates how to retrieve all PNL configs of a position.                                                |
-| `post_pnl_configs_position.py`       | Demonstrates how to setup a PNL config the existing position.                                              |
 
 
 #### Market Data API

@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from urllib import parse, request
 from uuid import uuid4
 
-DEFAULT_API_VERSION = "2026-05-07"
+DEFAULT_API_VERSION = "2026-07-23"
 
 
 def get_date_header_name():

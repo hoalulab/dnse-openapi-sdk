@@ -20,7 +20,7 @@ def main():
         from_date="2025-12-01",
         to_date="2025-12-09",
         page_size=20,
-        page_index=1,
+        page_index=0,
         dry_run=False,
     )
     print(status, body)

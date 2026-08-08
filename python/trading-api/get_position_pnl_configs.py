@@ -14,7 +14,11 @@ def main():
         base_url="https://openapi.dnse.com.vn",
     )
 
-    status, body = client.get_trading_session(tsc_prod_grp_id="FBX", board_id="", dry_run=False)
+    status, body = client.get_position_pnl_configs(
+        position_id="replace-with-position-id",
+        market_type="DERIVATIVE",
+        dry_run=False,
+    )
     print(status, body)
 
 

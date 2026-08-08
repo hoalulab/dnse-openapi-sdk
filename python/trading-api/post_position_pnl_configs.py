@@ -2,43 +2,43 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from dnse import DNSEClient
 
 
 def main():
     client = DNSEClient(
-        api_key=os.getenv("DNSE_API_KEY"),
-        api_secret=os.getenv("DNSE_API_SECRET"),
+        api_key="replace-with-api-key",
+        api_secret="replace-with-api-secret",
         base_url="https://openapi.dnse.com.vn",
     )
 
     payload = {
         "takeProfit": {
-            "enabled": False,
-            "strategy": "DELTA_PRICE",
-            "rate": 0.52,
+            "enabled": True,
+            "strategy": "PNL_RATE",
+            "rate": 0.4,
             "deltaPrice": 162.8,
             "orderMethod": "FASTEST",
-            "orderDeltaPrice": 2
+            "orderDeltaPrice": 2.0,
         },
         "stopLoss": {
-            "enabled": False,
-            "strategy": "PNL_RATE",
-            "rate": -0.34,
-            "deltaPrice": 50.3,
+            "enabled": True,
+            "strategy": "DELTA_PRICE",
+            "rate": 1.0,
+            "deltaPrice": 50.0,
             "orderMethod": "DELTA_PRICE",
             "orderDeltaPrice": 10.5,
-            "trailingEnabled": False
-        }
+            "trailingEnabled": True,
+        },
     }
 
-    status, body = client.post_pnl_configs_position(
+    status, body = client.post_position_pnl_configs(
+        position_id="replace-with-position-id",
         market_type="DERIVATIVE",
         payload=payload,
         trading_token=os.getenv("DNSE_TRADING_TOKEN"),
-        order_category="NORMAL",
         dry_run=False,
     )
     print(status, body)
