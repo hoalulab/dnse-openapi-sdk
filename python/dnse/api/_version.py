@@ -1,3 +1,3 @@
 """Version information for api sdk."""
 
-__version__ = "1.4.6"
+__version__ = "2.0.0"
