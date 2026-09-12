@@ -24,13 +24,11 @@ and investment applications.
 Using `pip`
 ```bash
 
-pip install -U git+https://github.com/vnbrokers/dnse-openapi-sdk.git@2.0.0#subdirectory=python
+pip install -U git+https://github.com/vnbrokers/dnse-openapi-sdk.git@2.2.1#subdirectory=python
 
 ## install latest version
 # pip install -U git+https://github.com/vnbrokers/dnse-openapi-sdk.git@main#subdirectory=python
 
-## install specific git commit with pip
-# pip install -U git+https://github.com/vnbrokers/dnse-openapi-sdk.git@8533ced#subdirectory=python
 ```
 
 
