@@ -40,7 +40,7 @@ async def main():
 
     print("Subscribing to ohlc closed for SSI, VN30F1M and VN30...")
     # internal 1 3 5 15 30 1H 1D 1W
-    await client.subscribe_ohlc_closed(["SSI", "VN30F1M", "VN30"], resolution="1", on_ohlc=handle_ohlc, encoding=encoding)
+    await client.subscribe_ohlc_closed(["SSI", "VN30F1M", "VN30"], on_ohlc=handle_ohlc, encoding=encoding)
 
     # Subscribe to 1-minute OHLC
 

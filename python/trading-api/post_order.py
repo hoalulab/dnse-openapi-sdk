@@ -32,10 +32,8 @@ def main():
         account_no="0001000115",                                # Số tiểu khoản đặt lệnh
         market_type="STOCK",                                    # Thị trường giao dịch
         order_category="NORMAL",                                # Loại lệnh (NORMAL / STOP / OCO)
-        trading_token="replace-with-trading-token",
-        payload=payload,
         trading_token=os.getenv("DNSE_TRADING_TOKEN"),
-        order_category="NORMAL",
+        payload=payload,
         dry_run=False,
     )
     print(status, body)
