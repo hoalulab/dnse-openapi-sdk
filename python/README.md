@@ -24,7 +24,7 @@ and investment applications.
 Using `pip`
 ```bash
 
-pip install -U git+https://github.com/vnbrokers/dnse-openapi-sdk.git@2.3.1#subdirectory=python
+pip install -U git+https://github.com/vnbrokers/dnse-openapi-sdk.git@2.4.0#subdirectory=python
 
 ## install latest version
 # pip install -U git+https://github.com/vnbrokers/dnse-openapi-sdk.git@main#subdirectory=python
