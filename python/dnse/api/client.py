@@ -295,10 +295,10 @@ class DNSEClient:
             dry_run=dry_run,
         )
 
-    def get_trades_volume_profile(self, symbol, from_date, to_date, board_id=None, dry_run=False):
-        query = {"from": from_date, "to": to_date}
+    def get_trades_volume_profile(self, symbol, time, board_id=None, dry_run=False):
+        query = {"time": time}
         if board_id is not None:
-            query["board_id"] = board_id
+            query["boardId"] = board_id
         return self._request(
             "GET",
             f"/price/{symbol}/trades/volume-profile",
@@ -537,6 +537,15 @@ class DNSEClient:
             dry_run=dry_run,
         )
 
+    def create_smart_otp_handoff(self, version="2026-01-01", dry_run=False):
+        return self._request(
+            "POST",
+            "/registration/smart-otp/handoff",
+            version=version,
+            timeout=urllib3.Timeout(connect=30.0, read=330.0),
+            dry_run=dry_run,
+        )
+
     def send_email_otp(self, dry_run=False):
         return self._request(
             "POST",
@@ -567,7 +576,7 @@ class DNSEClient:
             dry_run=dry_run,
         )
 
-    def _request(self, method, path, query=None, body=None, headers=None, version=None, dry_run=False):
+    def _request(self, method, path, query=None, body=None, headers=None, version=None, timeout=None, dry_run=False):
         debug = os.getenv("DEBUG", "").lower() == "true"
         url = self._build_url(path, query)
         date_value, signature_header_value = self._signature_headers(method, path)
@@ -604,12 +613,13 @@ class DNSEClient:
             return None, None
 
         try:
-            resp = self._http.request(
-                method,
-                url,
-                body=data,
-                headers=req_headers,
-            )
+            request_kwargs = {
+                "body": data,
+                "headers": req_headers,
+            }
+            if timeout is not None:
+                request_kwargs["timeout"] = timeout
+            resp = self._http.request(method, url, **request_kwargs)
             body_text = resp.data.decode("utf-8")
             return resp.status, body_text
         except urllib3.exceptions.HTTPError as err:

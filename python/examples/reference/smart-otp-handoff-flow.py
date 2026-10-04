@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 import os
 import sys
 
@@ -14,11 +15,15 @@ def main():
         base_url="https://openapi.dnse.com.vn",
     )
 
-    status, body = client.get_trades_volume_profile(
-        symbol="VIC",
-        time="2026-09-01",
-        board_id="G1",
-        dry_run=False,
+    status, body = client.create_smart_otp_handoff()
+    if status != 200:
+        print(status, body)
+        return
+
+    smart_otp = json.loads(body)["smartOtp"]
+    status, body = client.create_trading_token(
+        otp_type="smart_otp",
+        passcode=smart_otp,
     )
     print(status, body)
 
